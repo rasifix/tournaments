@@ -38,6 +38,6 @@ const nextMatch = () => {
 
     <div v-if="showNext">
         <button style="position:fixed; bottom: 0%; margin-bottom: 2rem; width: calc(100vw - 4rem); margin-top: 2rem"
-            class="primary" @click="nextMatch()">N&auml;chster Match</button>
+            class="primary clickable" @click="nextMatch()">N&auml;chster Match</button>
     </div>
 </template>

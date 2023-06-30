@@ -32,39 +32,39 @@ const letsGo = () => {
 
 <template>
     <div v-if="step === 0">
-        <h1>Turnier ausw&auml;hlen</h1>
+        <h1 style="text-align: center">>Turnier ausw&auml;hlen</h1>
         <ul>
-            <li v-for="(t) in tournamentStore.allTournaments" @click="step = 1; tournament = t" style="display:flex">
+            <li v-for="(t, index) in tournamentStore.allTournaments" class="clickable" :key="index" @click="step = 1; tournament = t" style="display:flex">
                 <span style="flex: 1">{{ t.title }}</span>
                 <span>&#x276F;</span>
             </li>
         </ul>        
     </div>
     <div v-if="step === 1">
-        <h1>Spieler ausw&auml;hlen</h1>
+        <h1 style="text-align: center">Spieler ausw&auml;hlen</h1>
         <ul>
-            <li v-for="(player, index) in store.players" class="player-pill" @click="playerSelected(player)" :class="{ selected: players.has(player.title)}">
+            <li v-for="(player, index) in store.players" class="player-pill clickable" @click="playerSelected(player)" :key="index" :class="{ selected: players.has(player.title)}">
                 {{ player.title }}
             </li>
         </ul>
         <div style="display: flex; margin-top: 1rem">
             <span style="flex: 1"></span>
-            <button class="primary" @click="step = 2" :disabled="players.size < tournament.players.min || players.size > tournament.players.max">Next</button>
+            <button class="primary clickable" @click="step = 2" :disabled="players.size < tournament.players.min || players.size > tournament.players.max">Next</button>
         </div>
     </div>
     <div v-if="step === 2">
-        <h1>Team ausw&auml;hlen</h1>
+        <h1 style="text-align: center">>Team ausw&auml;hlen</h1>
         <ul>
-            <li v-for="(t) in tournament.teams" @click="step = 3; team = t" style="display:flex">
+            <li v-for="(t, index) in tournament.teams" class="clickable" :key="index" @click="step = 3; team = t" style="display:flex">
                 <span style="flex: 1">{{ t }}</span>
                 <span>&#x276F;</span>
             </li>
         </ul>
     </div>
     <div v-if="step === 3">
-        <h1>Zusammenfassung</h1>
-        <div>{{ tournament.title }} | Team {{ team }}</div>
-        <div>{{ [...players].reduce((acc, curr) => acc + ", " + curr) }}</div>
+        <h1 style="text-align: center">Zusammenfassung</h1>
+        <div style="text-align: center">{{ tournament.title }} | Team {{ team }}</div>
+        <div style="text-align: center">{{ [...players].reduce((acc, curr) => acc + ", " + curr) }}</div>
         <table style="width: 100%">
             <thead>
                 <th>Feld</th>
@@ -72,14 +72,14 @@ const letsGo = () => {
                 <th>Match</th>
             </thead>
             <tbody>
-                <tr v-for="match in tournament.matches.filter(m => m.teams.find(t => t === team))">
+                <tr v-for="(match, index) in tournament.matches.filter(m => m.teams.find(t => t === team))" :key="index">
                     <td>{{ tournament.fields[match.field].name }}</td>
                     <td>{{ tournament.fields[match.field].format }}</td>
                     <td>{{ match.teams.reduce((acc, curr) => acc + " - " + curr) }}</td>
                 </tr>
             </tbody>
         </table>
-        <button class="primary" style="margin-top: 1rem; width: 100%" @click="letsGo()">Los geht es!</button>
+        <button class="primary clickable" style="margin-top: 1rem; width: 100%" @click="letsGo()">Los geht es!</button>
     </div>
 </template>
 

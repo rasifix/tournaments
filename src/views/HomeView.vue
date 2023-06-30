@@ -16,16 +16,16 @@ const hasActiveTournament = computed(() => !!useTournamentStore.active)
 
 <template>
   <main>
-    <h1 style="text-align: center">Match Center</h1>
-    <div class="pill" @click="$router.push('/players')">
+    <h1 style="text-align: center">Turnier App</h1>
+    <div class="pill clickable" @click="$router.push('/players')">
       Spieler
-      <span style="float:right; display:inline-block; border-radius: 50%; width: 24px; height: 24px; background:white; color: black">{{ playerCount }}</span>
+      <span style="float:right; display:inline-block; border-radius: 50%; width: 24px; height: 24px; background:white; color: black; font-size: 14px">{{ playerCount }}</span>
     </div>
 
-    <div v-if="hasActiveTournament" class="pill" @click="$router.push('/tournaments/active')">
+    <div v-if="hasActiveTournament" class="pill clickable" @click="$router.push('/tournaments/active')">
       Aktives Turnier
     </div>
-    <div v-else-if="hasPlayers" class="pill" @click="$router.push('/tournaments/setup')">
+    <div v-else-if="hasPlayers" class="pill clickable" @click="$router.push('/tournaments/setup')">
       Turnier starten
     </div>
   </main>

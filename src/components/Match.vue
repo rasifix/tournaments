@@ -122,31 +122,31 @@ const substitute = () => {
     <div v-if="!startTime && !done">
         <h1 style="text-align:center">Startaufstellung</h1>
         <div style="margin-top: 1.5rem; display: flex; align-items: flex-start; flex-wrap: wrap" class="player-grid">
-            <div class="player-pill" v-for="player in startingLineup" :class="{ selected: player.selected }"
+            <div class="player-pill clickable" v-for="player in startingLineup" :class="{ selected: player.selected }"
                 @click="selectLineupPlayer(player)">{{ player.name }}</div>
         </div>
         <div>
             <button
                 style="position:fixed; bottom: 0%; margin-bottom: 2rem; width: calc(100vw - 4rem); font-size: 1.5rem; margin-top: 2rem"
-                class="primary" @click="start()" :disabled="!hasEnoughPlayersInLineup">&#x25B6;</button>
+                class="primary clickable" @click="start()" :disabled="!hasEnoughPlayersInLineup">&#x25B6;</button>
         </div>
     </div>
     <div v-if="startTime">
         <div class="timer">{{ duration }}</div>
         <div style="margin-top: 1.5rem; display: flex; align-items: flex-start;">
             <ul style="width: 50%; display: inline-block; flex: 1">
-                <li v-for="player in bench" @click="selectBenchPlayer(player)" :class="{ selected: player.selected }">
+                <li v-for="player in bench" @click="selectBenchPlayer(player)" class="clickable" :class="{ selected: player.selected }">
                     {{ player.name }} <span v-if="player.selected">&#129146;</span></li>
             </ul>
             <ul style="display: inline-block; flex: 1" class="pitch">
-                <li v-for="player in pitch" @click="selectPitchPlayer(player)" :class="{ selected: player.selected }">
+                <li v-for="player in pitch" @click="selectPitchPlayer(player)" class="clickable" :class="{ selected: player.selected }">
                     {{ player.name }} <span v-if="player.selected">&#129144;</span></li>
             </ul>
         </div>
         <div>
             <button
                 style="position:fixed; bottom: 0%; margin-bottom: 2rem; width: calc(100vw - 4rem); font-size: 1.5rem; margin-top: 2rem"
-                class="primary" @click="substitute()"
+                class="primary clickable" @click="substitute()"
                 :disabled="selectedBenchPlayers.length !== selectedPitchPlayers.length || selectedPitchPlayers.length === 0">&#11138;</button>
         </div>
     </div>
@@ -198,6 +198,7 @@ div.player-pill {
     text-transform: uppercase;
     width: 100%;
     display: inline-block;
+    cursor: pointer;
 }
 
 div.player-pill.selected {

@@ -10,7 +10,7 @@ const router = useRouter()
 
 <template>
   <ul>
-    <li v-for="(tournament, index) in store.allTournaments" @click="selectTournament(tournament)">{{ tournament.title }}</li>
+    <li class="clickable" v-for="(tournament, index) in store.allTournaments" :key="index" @click="selectTournament(tournament)">{{ tournament.title }}</li>
   </ul>
 </template>
 

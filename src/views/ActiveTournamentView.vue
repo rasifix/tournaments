@@ -20,7 +20,7 @@ const selectMatch = (index) => {
     <h1>Turnier {{ store.active.category }} - Team {{ store.active.team }}</h1>
     <div style="text-align: center; margin-bottom: 2rem">{{  [...store.active.players].reduce((acc, curr) => acc + ", " + curr) }}</div>
     <ul class="pills">
-        <li v-for="(match, index) in store.active.matches" :class="{ future: index > store.active.nextMatch, selected: index === store.active.nextMatch }" @click="selectMatch(index)">
+        <li v-for="(match, index) in store.active.matches" :key="index" class="clickable" :class="{ future: index > store.active.nextMatch, selected: index === store.active.nextMatch }" @click="selectMatch(index)">
             <div class="field-number"><div class="field-number-content">{{ match.field }}</div></div> 
             <div class="field-number" style="flex: 1; border-right: none"><div class="field-number-content">{{ match.teams.reduce((acc, curr) => acc + " - " + curr) }} | {{ match.format.name }}</div></div>
         </li>
@@ -63,7 +63,8 @@ li {
 
 ul.pills li {
     padding: 0px;
-    display: flex
+    display: flex;
+    cursor: pointer;
 }
 
 li.selected {

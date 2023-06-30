@@ -21,19 +21,6 @@ a,
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
-
 :root {
   --color-background: #222;
   --color-text: #eee;
@@ -41,6 +28,10 @@ a,
 
 button {
   height: 2.5rem;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 button.primary {

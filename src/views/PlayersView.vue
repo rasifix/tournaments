@@ -20,7 +20,7 @@ function removePlayer(index) {
   <main>
     <h1 style="text-align: center;">Spieler verwalten</h1>
     <PlayerList :players="store.players" @add="addPlayer" @remove="removePlayer"/>
-    <div class="footer"><button class="primary" @click="$router.push('/')">Back</button></div>
+    <div class="footer"><button class="primary clickable" @click="$router.push('/')">Back</button></div>
   </main>
 </template>
 
