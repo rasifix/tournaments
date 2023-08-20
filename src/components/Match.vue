@@ -2,26 +2,29 @@
 
 import { computed, ref, defineProps, defineEmits, watch } from 'vue'
 import moment from 'moment'
+import Timer from './Timer.vue'
 
 const props = defineProps(['match', 'players'])
 const emit = defineEmits(['done'])
 
 const players = props.players?.sort()
 
+const timer = ref(null)
+
 const pitch = ref([])
 const bench = ref(players.map(p => ({ name: p, selected: false })))
-const startingLineup = ref(props.players.map(p => ({ name: p, selected: false })))
+const select = props.match.format.players === players.length
+const startingLineup = ref(props.players.map(p => ({ name: p, selected: select })))
 
 const events = ref([])
-const startTime = ref(null)
 const done = ref(false)
-const duration = ref('00:00')
+
+const startTime = ref(null)
 
 watch(() => props.match, (newValue, oldValue) => {
     events.value = []
-    startTime.value = null
     done.value = false
-    duration.value = '00:00'
+    timer.value.reset()
 })
 
 const hasEnoughPlayersInLineup = computed(() => {
@@ -51,32 +54,24 @@ const matchReport = computed(() => {
     }).sort((a, b) => b.totalTime - a.totalTime)
 })
 
-let timer = null
-
-const refresh = () => {
-    duration.value = moment().subtract(startTime.value).format('mm:ss')
-    if (new Date() - startTime.value > props.match.duration * 1000) {
-        done.value = true
-        events.value.push(...pitch.value.map(p => ({ type: 'substitution', direction: 'out', player: p.name, time: props.match.duration * 1000 })))
-        stop()
-        console.log('emit done')
-        emit('done')
-    }
-}
-
-const start = () => {
+const start = () => {    
     bench.value = startingLineup.value.filter(p => !p.selected).map(p => ({ name: p.name, selected: false }))
     pitch.value = startingLineup.value.filter(p => p.selected).map(p => ({ name: p.name, selected: false }))
-    startTime.value = new Date()
 
     events.value.push(...pitch.value.map(p => ({ type: 'substitution', direction: 'in', player: p.name, time: 0, formattedTime: '00:00' })))
 
-    timer = setInterval(() => refresh(), 1000)
+    startTime.value = new Date()
+    timer.value.start()
+}
+
+const timerDone = () => {
+    done.value = true
+    events.value.push(...pitch.value.map(p => ({ type: 'substitution', direction: 'out', player: p.name, time: props.match.duration * 1000 })))
+    emit('done')
 }
 
 const stop = () => {
-    clearInterval(timer)
-    startTime.value = null
+    timer.value.stop()
 }
 
 const selectBenchPlayer = (player) => {
@@ -105,7 +100,7 @@ const substitute = () => {
     bench.value = newBench
     pitch.value = newPitch
 
-    const time = moment().subtract(startTime.value).valueOf()
+    const time = timer.value.time()
 
     events.value.push(...inset.map(p => ({ type: 'substitution', direction: 'in', player: p.name, time })))
     events.value.push(...outset.map(p => ({ type: 'substitution', direction: 'out', player: p.name, time })))
@@ -122,7 +117,7 @@ const substitute = () => {
     <div v-if="!startTime && !done">
         <h1 style="text-align:center">Startaufstellung</h1>
         <div style="margin-top: 1.5rem; display: flex; align-items: flex-start; flex-wrap: wrap" class="player-grid">
-            <div class="player-pill clickable" v-for="player in startingLineup" :class="{ selected: player.selected }"
+            <div class="player-pill clickable" v-for="(player, index) in startingLineup" :key="index" :class="{ selected: player.selected }"
                 @click="selectLineupPlayer(player)">{{ player.name }}</div>
         </div>
         <div>
@@ -131,15 +126,15 @@ const substitute = () => {
                 class="primary clickable" @click="start()" :disabled="!hasEnoughPlayersInLineup">&#x25B6;</button>
         </div>
     </div>
-    <div v-if="startTime">
-        <div class="timer">{{ duration }}</div>
+    <div v-show="startTime && !done">
+        <Timer ref="timer" :duration="props.match.duration" @done="timerDone"></Timer>
         <div style="margin-top: 1.5rem; display: flex; align-items: flex-start;">
             <ul style="width: 50%; display: inline-block; flex: 1">
-                <li v-for="player in bench" @click="selectBenchPlayer(player)" class="clickable" :class="{ selected: player.selected }">
+                <li v-for="(player, index) in bench" @click="selectBenchPlayer(player)" :key="index" class="clickable" :class="{ selected: player.selected }">
                     {{ player.name }} <span v-if="player.selected">&#129146;</span></li>
             </ul>
             <ul style="display: inline-block; flex: 1" class="pitch">
-                <li v-for="player in pitch" @click="selectPitchPlayer(player)" class="clickable" :class="{ selected: player.selected }">
+                <li v-for="(player, index) in pitch" @click="selectPitchPlayer(player)" :key="index" class="clickable" :class="{ selected: player.selected }">
                     {{ player.name }} <span v-if="player.selected">&#129144;</span></li>
             </ul>
         </div>
@@ -153,7 +148,7 @@ const substitute = () => {
     <div v-if="done">
         <h1 style="text-align:center">Match beendet</h1>
         <div class="stats-container">
-            <div v-for="player in matchReport" class="stats-row-container">
+            <div v-for="(player, index) in matchReport" :key="index" class="stats-row-container">
                 <div class="stats-row">
                     <div style="display:inline-block; flex:1; text-align: left">{{ player.player }}</div>
                     <div style="display:inline-block; flex:1; text-align: right">{{ formatTime(player.totalTime) }}</div>
@@ -164,12 +159,6 @@ const substitute = () => {
 </template>
 
 <style scoped>
-.timer {
-    font-size: 3rem;
-    font-weight: bold;
-    text-align: center;
-}
-
 ul {
     list-style: none;
     padding-left: 0px;

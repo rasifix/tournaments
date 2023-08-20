@@ -32,13 +32,10 @@ const letsGo = () => {
 
 <template>
     <div v-if="step === 0">
-        <h1 style="text-align: center">>Turnier ausw&auml;hlen</h1>
-        <ul>
-            <li v-for="(t, index) in tournamentStore.allTournaments" class="clickable" :key="index" @click="step = 1; tournament = t" style="display:flex">
-                <span style="flex: 1">{{ t.title }}</span>
-                <span>&#x276F;</span>
-            </li>
-        </ul>        
+        <h1 style="text-align: center">Turnier ausw&auml;hlen</h1>
+        <div v-for="(t, index) in tournamentStore.allTournaments" class="pill clickable" :key="index" @click="step = 1; tournament = t" style="display:flex">
+            <span style="flex: 1">{{ t.title }}</span>
+        </div>
     </div>
     <div v-if="step === 1">
         <h1 style="text-align: center">Spieler ausw&auml;hlen</h1>
@@ -53,7 +50,7 @@ const letsGo = () => {
         </div>
     </div>
     <div v-if="step === 2">
-        <h1 style="text-align: center">>Team ausw&auml;hlen</h1>
+        <h1 style="text-align: center">Team ausw&auml;hlen</h1>
         <ul>
             <li v-for="(t, index) in tournament.teams" class="clickable" :key="index" @click="step = 3; team = t" style="display:flex">
                 <span style="flex: 1">{{ t }}</span>
